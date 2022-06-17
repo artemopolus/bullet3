@@ -132,7 +132,7 @@ struct ExampleEntry
 	{
 	}
 };
-
+// TODO: вставить дефайны для убирания ненужных тестов
 static ExampleEntry gDefaultExamples[] =
 	{
 		ExampleEntry(0, "API"),

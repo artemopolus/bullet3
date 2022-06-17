@@ -427,7 +427,9 @@ int btDiscreteDynamicsWorld::stepSimulation(btScalar timeStep, int maxSubSteps, 
 
 		saveKinematicState(fixedTimeStep * clampedSimulationSteps);
 
-		applyGravity();
+		applyGravity(); //<---тут обновляем гравитацию
+
+		//TODO: обновляем аэродинамику?
 
 		for (int i = 0; i < clampedSimulationSteps; i++)
 		{

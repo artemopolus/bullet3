@@ -204,6 +204,8 @@ public:
 
 	void saveKinematicState(btScalar step);
 
+	//TODO: обновляем аэродинамику?
+
 	void applyGravity();
     
     void clearGravity();
