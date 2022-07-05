@@ -138,9 +138,22 @@ SET(BulletDynamics_HDRS
 	${Featherstone_HDRS}
 	${MLCPSolvers_HDRS}
 )
-
-
 ADD_LIBRARY(BulletDynamics ${BulletDynamics_SRCS} ${BulletDynamics_HDRS})
+
+# ===========================================
+set(EXMATHLIB_DIR "J:/WorkspaceFast/ThirdParty/install")
+list (APPEND CMAKE_PREFIX_PATH ${EXMATHLIB_DIR}/cmake)
+target_include_directories(
+	BulletDynamics	
+	PRIVATE
+	${EXMATHLIB_DIR}/incl
+)
+find_package(exmathlib CONFIG REQUIRED)
+target_link_libraries( BulletDynamics ExMathLib::exmathlib)
+# =========================================
+
+
+
 SET_TARGET_PROPERTIES(BulletDynamics PROPERTIES VERSION ${BULLET_VERSION})
 SET_TARGET_PROPERTIES(BulletDynamics PROPERTIES SOVERSION ${BULLET_VERSION})
 IF (BUILD_SHARED_LIBS)

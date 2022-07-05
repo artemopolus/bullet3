@@ -20,6 +20,7 @@ subject to the following restrictions:
 #include "LinearMath/btMotionState.h"
 #include "BulletDynamics/ConstraintSolver/btTypedConstraint.h"
 #include "LinearMath/btSerializer.h"
+#include "ExCalculator.h"
 
 //'temporarily' global variables
 btScalar gDeactivationTime = btScalar(2.);
@@ -28,6 +29,7 @@ static int uniqueId = 0;
 
 btRigidBody::btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo)
 {
+	ExCalculator::Vector line;
 	setupRigidBody(constructionInfo);
 }
 
