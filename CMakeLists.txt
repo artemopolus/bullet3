@@ -7,6 +7,9 @@ SET(MSVC_INCREMENTAL_DEFAULT ON)
 PROJECT(BULLET_PHYSICS)
 FILE (STRINGS "VERSION" BULLET_VERSION)
 
+#embox_add
+configure_file(Mybuild Mybuild COPYONLY)
+
 IF(COMMAND cmake_policy)
    cmake_policy(SET CMP0003 NEW)
    if(POLICY CMP0042)
