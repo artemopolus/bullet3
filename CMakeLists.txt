@@ -7,8 +7,6 @@ SET(MSVC_INCREMENTAL_DEFAULT ON)
 PROJECT(BULLET_PHYSICS)
 FILE (STRINGS "VERSION" BULLET_VERSION)
 
-#embox_add
-configure_file(Mybuild Mybuild COPYONLY)
 
 IF(COMMAND cmake_policy)
    cmake_policy(SET CMP0003 NEW)
@@ -513,3 +511,13 @@ IF (INSTALL_CMAKE_FILES)
 		DESTINATION ${BULLET_CONFIG_CMAKE_PATH}
 	)
 ENDIF (INSTALL_CMAKE_FILES)
+
+
+#embox_add
+OPTION(USE_EMBOX_MYBUILD "Use embox Mybuild" ON)
+IF(USE_EMBOX_MYBUILD)
+	configure_file(Mybuild Mybuild COPYONLY)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -mfloat-abi=hard ")
+	# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=vfp -mfloat-abi=hard")
+ENDIF(USE_EMBOX_MYBUILD)
+
