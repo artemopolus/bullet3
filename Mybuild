@@ -1,19 +1,19 @@
 package ext.bullet
 
 
-@Build(stage=1,script="$(EXTERNAL_MAKE)")
+@Build(stage=1,script="$(EXTERNAL_MAKE) install")
 // @BuildArtifactPath(cppflags="-I$(abspath $(EXTERNAL_BUILD_DIR))/third_party/qt/core/install/include ")
 @BuildDepends(embox.lib.libsupcxx)
 @BuildDepends(embox.lib.libgcc)
 static module core{
 
-	@AddPrefix("../../../../../bullet3/build/src")
-	source "BulletCollision/libBulletCollision.a",
-	"BulletInverseDynamics/libBulletInverseDynamics.a",
-	"BulletDynamics/libBulletDynamics.a",
-	"Bullet3Common/libBullet3Common.a",
-	"LinearMath/libLinearMath.a",
-	"BulletSoftBody/libBulletSoftBody.a"
+	@AddPrefix("lib")
+	source "libBulletCollision.a",
+	"libBulletInverseDynamics.a",
+	"libBulletDynamics.a",
+	"libBullet3Common.a",
+	"libLinearMath.a",
+	"libBulletSoftBody.a"
 
 	@NoRuntime depends embox.lib.libsupcxx
 	@NoRuntime depends embox.lib.libgcc
