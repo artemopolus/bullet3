@@ -517,7 +517,7 @@ ENDIF (INSTALL_CMAKE_FILES)
 OPTION(USE_EMBOX_MYBUILD "Use embox Mybuild" ON)
 IF(USE_EMBOX_MYBUILD)
 	configure_file(Mybuild Mybuild COPYONLY)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -mfloat-abi=hard ")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=cortex-m7 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -mlittle-endian -mcpu=cortex-m7 -ffreestanding -fomit-frame-pointer")
 	# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=vfp -mfloat-abi=hard")
 ENDIF(USE_EMBOX_MYBUILD)
 

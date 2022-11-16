@@ -12,8 +12,8 @@ static module core{
 	"libBulletInverseDynamics.a",
 	"libBulletDynamics.a",
 	"libBullet3Common.a",
-	"libLinearMath.a",
-	"libBulletSoftBody.a"
+	"libLinearMath.a"//,
+	// "libBulletSoftBody.a"
 
 	@NoRuntime depends embox.lib.libsupcxx
 	@NoRuntime depends embox.lib.libgcc
