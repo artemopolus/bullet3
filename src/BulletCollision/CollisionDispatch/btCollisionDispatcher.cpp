@@ -27,19 +27,24 @@ subject to the following restrictions:
 
 #ifdef BT_DEBUG
 #include <stdio.h>
+#define EMBT_PRINT(x) printf(x)
+#else
+#define EMBT_PRINT(x)
 #endif
+
 
 btCollisionDispatcher::btCollisionDispatcher(btCollisionConfiguration* collisionConfiguration) : m_dispatcherFlags(btCollisionDispatcher::CD_USE_RELATIVE_CONTACT_BREAKING_THRESHOLD),
 																								 m_collisionConfiguration(collisionConfiguration)
 {
 	int i;
-
+	EMBT_PRINT("btCollisionDispatcher part 1");
 	setNearCallback(defaultNearCallback);
 
 	m_collisionAlgorithmPoolAllocator = collisionConfiguration->getCollisionAlgorithmPool();
 
 	m_persistentManifoldPoolAllocator = collisionConfiguration->getPersistentManifoldPool();
 
+	EMBT_PRINT("btCollisionDispatcher part 2");
 	for (i = 0; i < MAX_BROADPHASE_COLLISION_TYPES; i++)
 	{
 		for (int j = 0; j < MAX_BROADPHASE_COLLISION_TYPES; j++)
@@ -49,6 +54,7 @@ btCollisionDispatcher::btCollisionDispatcher(btCollisionConfiguration* collision
 			m_doubleDispatchClosestPoints[i][j] = m_collisionConfiguration->getClosestPointsAlgorithmCreateFunc(i, j);
 		}
 	}
+	EMBT_PRINT("btCollisionDispatcher part 3");
 }
 
 void btCollisionDispatcher::registerCollisionCreateFunc(int proxyType0, int proxyType1, btCollisionAlgorithmCreateFunc* createFunc)
