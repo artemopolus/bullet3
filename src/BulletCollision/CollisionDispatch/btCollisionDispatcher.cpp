@@ -32,12 +32,16 @@ subject to the following restrictions:
 #define EMBT_PRINT(x)
 #endif
 
+	#pragma GCC push_options
+	#pragma GCC optimize ("O0")
 
 btCollisionDispatcher::btCollisionDispatcher(btCollisionConfiguration* collisionConfiguration) : m_dispatcherFlags(btCollisionDispatcher::CD_USE_RELATIVE_CONTACT_BREAKING_THRESHOLD),
 																								 m_collisionConfiguration(collisionConfiguration)
 {
+	m_collisionConfiguration = collisionConfiguration;
 	int i;
 	EMBT_PRINT("btCollisionDispatcher part 1");
+	printf("nnn");
 	setNearCallback(defaultNearCallback);
 
 	m_collisionAlgorithmPoolAllocator = collisionConfiguration->getCollisionAlgorithmPool();
@@ -50,12 +54,13 @@ btCollisionDispatcher::btCollisionDispatcher(btCollisionConfiguration* collision
 		for (int j = 0; j < MAX_BROADPHASE_COLLISION_TYPES; j++)
 		{
 			m_doubleDispatchContactPoints[i][j] = m_collisionConfiguration->getCollisionAlgorithmCreateFunc(i, j);
-			btAssert(m_doubleDispatchContactPoints[i][j]);
+			// btAssert(m_doubleDispatchContactPoints[i][j]);
 			m_doubleDispatchClosestPoints[i][j] = m_collisionConfiguration->getClosestPointsAlgorithmCreateFunc(i, j);
 		}
 	}
 	EMBT_PRINT("btCollisionDispatcher part 3");
 }
+#pragma GCC pop_options
 
 void btCollisionDispatcher::registerCollisionCreateFunc(int proxyType0, int proxyType1, btCollisionAlgorithmCreateFunc* createFunc)
 {
