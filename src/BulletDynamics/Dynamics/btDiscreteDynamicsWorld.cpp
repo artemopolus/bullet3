@@ -53,6 +53,16 @@ int startHit=2;
 int firstHit=startHit;
 #endif
 
+
+#ifdef BT_DEBUG
+#include <stdio.h>
+#ifndef EMBT_PRINT
+#define EMBT_PRINT(x) printf(x)
+#else
+#define EMBT_PRINT(x)
+#endif
+#endif
+
 SIMD_FORCE_INLINE int btGetConstraintIslandId(const btTypedConstraint* lhs)
 {
 	int islandId;
@@ -536,6 +546,7 @@ void btDiscreteDynamicsWorld::removeRigidBody(btRigidBody* body)
 
 void btDiscreteDynamicsWorld::addRigidBody(btRigidBody* body)
 {
+	EMBT_PRINT("Add rigit body\n");
 	if (!body->isStaticOrKinematicObject() && !(body->getFlags() & BT_DISABLE_WORLD_GRAVITY))
 	{
 		body->setGravity(m_gravity);
@@ -543,6 +554,7 @@ void btDiscreteDynamicsWorld::addRigidBody(btRigidBody* body)
 
 	if (body->getCollisionShape())
 	{
+		EMBT_PRINT("add collision obj\n");
 		if (!body->isStaticObject())
 		{
 			m_nonStaticRigidBodies.push_back(body);
@@ -558,6 +570,7 @@ void btDiscreteDynamicsWorld::addRigidBody(btRigidBody* body)
 
 		addCollisionObject(body, collisionFilterGroup, collisionFilterMask);
 	}
+	EMBT_PRINT("End rigit body\n");
 }
 
 void btDiscreteDynamicsWorld::addRigidBody(btRigidBody* body, int group, int mask)

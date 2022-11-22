@@ -27,9 +27,11 @@ subject to the following restrictions:
 
 #ifdef BT_DEBUG
 #include <stdio.h>
+#ifndef EMBT_PRINT
 #define EMBT_PRINT(x) printf(x)
 #else
 #define EMBT_PRINT(x)
+#endif
 #endif
 
 	// #pragma GCC push_options

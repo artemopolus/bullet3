@@ -64,6 +64,15 @@ subject to the following restrictions:
 #include "BulletCollision/CollisionShapes/btTriangleMeshShape.h"
 #include "BulletCollision/CollisionShapes/btStaticPlaneShape.h"
 
+#ifdef BT_DEBUG
+#include <stdio.h>
+#ifndef EMBT_PRINT
+#define EMBT_PRINT(x) printf(x)
+#else
+#define EMBT_PRINT(x)
+#endif
+#endif
+
 btCollisionWorld::btCollisionWorld(btDispatcher* dispatcher, btBroadphaseInterface* pairCache, btCollisionConfiguration* collisionConfiguration)
 	: m_dispatcher1(dispatcher),
 	  m_broadphasePairCache(pairCache),
@@ -123,6 +132,7 @@ void btCollisionWorld::refreshBroadphaseProxy(btCollisionObject* collisionObject
 
 void btCollisionWorld::addCollisionObject(btCollisionObject* collisionObject, int collisionFilterGroup, int collisionFilterMask)
 {
+	EMBT_PRINT("Add collision object\n");
 	btAssert(collisionObject);
 
 	//check that the object isn't already added
@@ -148,6 +158,7 @@ void btCollisionWorld::addCollisionObject(btCollisionObject* collisionObject, in
 		collisionFilterGroup,
 		collisionFilterMask,
 		m_dispatcher1));
+	EMBT_PRINT("End collision object\n");
 }
 
 void btCollisionWorld::updateSingleAabb(btCollisionObject* colObj)
