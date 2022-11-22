@@ -51,10 +51,10 @@ protected:
 	btPoolAllocator* m_collisionAlgorithmPoolAllocator;
 
 	btPoolAllocator* m_persistentManifoldPoolAllocator;
+#define MAX_BTCOLLDISP 30
+	btCollisionAlgorithmCreateFunc* m_doubleDispatchContactPoints[MAX_BTCOLLDISP][MAX_BTCOLLDISP];
 
-	btCollisionAlgorithmCreateFunc* m_doubleDispatchContactPoints[MAX_BROADPHASE_COLLISION_TYPES][MAX_BROADPHASE_COLLISION_TYPES];
-
-	btCollisionAlgorithmCreateFunc* m_doubleDispatchClosestPoints[MAX_BROADPHASE_COLLISION_TYPES][MAX_BROADPHASE_COLLISION_TYPES];
+	btCollisionAlgorithmCreateFunc* m_doubleDispatchClosestPoints[MAX_BTCOLLDISP][MAX_BTCOLLDISP];
 
 	btCollisionConfiguration* m_collisionConfiguration;
 
