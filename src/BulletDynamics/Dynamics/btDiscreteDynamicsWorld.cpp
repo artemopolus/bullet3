@@ -53,12 +53,13 @@ int startHit=2;
 int firstHit=startHit;
 #endif
 
-
 #ifdef BT_DEBUG
 #include <stdio.h>
 #ifndef EMBT_PRINT
 #define EMBT_PRINT(x) printf(x)
+#endif
 #else
+#ifndef EMBT_PRINT
 #define EMBT_PRINT(x)
 #endif
 #endif

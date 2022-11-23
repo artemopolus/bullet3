@@ -43,6 +43,18 @@ typedef btAlignedObjectArray<class btCollisionObject*> btCollisionObjectArray;
 #define btCollisionObjectDataName "btCollisionObjectFloatData"
 #endif
 
+#ifdef BT_DEBUG
+#include <stdio.h>
+#ifndef EMBT_PRINT
+#define EMBT_PRINT(x) printf(x)
+#endif
+#else
+#ifndef EMBT_PRINT
+#define EMBT_PRINT(x)
+#endif
+#endif
+
+
 /// btCollisionObject can be used to manage collision detection objects.
 /// btCollisionObject maintains all information that is needed for a collision detection: Shape, Transform and AABB proxy.
 /// They can be added to the btCollisionWorld.
@@ -220,6 +232,7 @@ public:
 
 	virtual void setCollisionShape(btCollisionShape * collisionShape)
 	{
+		EMBT_PRINT("Set Collision\n");
 		m_updateRevision++;
 		m_collisionShape = collisionShape;
 		m_rootCollisionShape = collisionShape;

@@ -25,9 +25,17 @@ int main(int argc, char** argv)
 
 	int i;
 	///-----initialization_start-----
+	/// 
+	
+	printf("Part 0\n");
+	btDefaultCollisionConstructionInfo constructionInfo;
+	constructionInfo.m_defaultMaxPersistentManifoldPoolSize = 16;
+	constructionInfo.m_defaultMaxCollisionAlgorithmPoolSize = 16;
+
+	printf("Part 3\n");
 
 	///collision configuration contains default setup for memory, collision setup. Advanced users can create their own configuration.
-	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
+	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration(constructionInfo);
 
 	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
 	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -177,4 +185,7 @@ int main(int argc, char** argv)
 
 	//next line is optional: it will be cleared by the destructor when the array goes out of scope
 	collisionShapes.clear();
+
+	printf("End\n");
+	return 0;
 }

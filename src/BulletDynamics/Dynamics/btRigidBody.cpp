@@ -21,6 +21,17 @@ subject to the following restrictions:
 #include "BulletDynamics/ConstraintSolver/btTypedConstraint.h"
 #include "LinearMath/btSerializer.h"
 
+#ifdef BT_DEBUG
+#include <stdio.h>
+#ifndef EMBT_PRINT
+#define EMBT_PRINT(x) printf(x)
+#endif
+#else
+#define EMBT_PRINT(x)
+#endif
+
+
+
 //'temporarily' global variables
 btScalar gDeactivationTime = btScalar(2.);
 bool gDisableDeactivation = false;
@@ -39,6 +50,7 @@ btRigidBody::btRigidBody(btScalar mass, btMotionState* motionState, btCollisionS
 
 void btRigidBody::setupRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo)
 {
+	EMBT_PRINT("Setup Rigit body\n");
 	m_internalType = CO_RIGID_BODY;
 
 	m_linearVelocity.setValue(btScalar(0.0), btScalar(0.0), btScalar(0.0));
