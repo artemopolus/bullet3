@@ -33,6 +33,19 @@ struct InplaceSolverIslandCallback;
 
 ///btDiscreteDynamicsWorld provides discrete rigid body simulation
 ///those classes replace the obsolete CcdPhysicsEnvironment/CcdPhysicsController
+/// 
+/// Этот класс создан как копия дискретного мира
+/// Здесь будут добавлены дополнительные функции вывода данных
+/// Изменения логики класса не имеют пока смысла
+/// 
+/// 
+
+struct DataDrawStorage
+{
+	btScalar data[256];
+};
+
+
 ATTRIBUTE_ALIGNED16(class)
 exCopyDDWorld : public btDynamicsWorld
 {
@@ -239,6 +252,11 @@ public:
     {
         return m_nonStaticRigidBodies;
     }
+
+	// Здесь вставляем новые функции
+
+	void getManifoldDataToDraw();
+
 };
 
 #endif  //EX_COPY_DDWORLD_H

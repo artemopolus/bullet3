@@ -1481,3 +1481,20 @@ void exCopyDDWorld::serialize(btSerializer* serializer)
 
 	serializer->finishSerialization();
 }
+void exCopyDDWorld::getManifoldDataToDraw()
+{
+
+
+	for (int i = 0; i < this->m_predictiveManifolds.size(); i++)
+	{
+		btPersistentManifold* current = m_predictiveManifolds[i];
+		int num_points = current->getNumContacts();
+		for (int j = 0; j < num_points; j++)
+		{
+			btManifoldPoint pt = current->getContactPoint(j);
+		}
+	}
+}
+
+
+
