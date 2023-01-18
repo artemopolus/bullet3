@@ -355,6 +355,9 @@ btSequentialImpulseConstraintSolver::btSequentialImpulseConstraintSolver()
 	m_btSeed2 = 0;
 	m_cachedSolverMode = 0;
 	setupSolverFunctions(false);
+
+	//
+	TmpDataStorage = new exConstSolvDataStorage();
 }
 
 void btSequentialImpulseConstraintSolver::setupSolverFunctions(bool useSimd)
@@ -1872,4 +1875,13 @@ btScalar btSequentialImpulseConstraintSolver::solveGroup(btCollisionObject** bod
 void btSequentialImpulseConstraintSolver::reset()
 {
 	m_btSeed2 = 0;
+}
+
+void btSequentialImpulseConstraintSolver::updateTmpDataStorage()
+{
+	for (int i = 0; i < m_tmpSolverContactConstraintPool.size(); i++)
+	{
+		btSolverConstraint* curr = &m_tmpSolverContactConstraintPool[i];
+		TmpDataStorage->updateData(btScalar(curr->m_appliedImpulse));
+	}
 }

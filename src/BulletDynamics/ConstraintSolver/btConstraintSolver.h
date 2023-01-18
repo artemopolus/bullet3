@@ -38,6 +38,32 @@ enum btConstraintSolverType
 	BT_BLOCK_SOLVER = 16,
 };
 
+#define BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ 256
+
+
+struct exConstSolvDataStorage
+{
+	btScalar data[BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ];
+	int sz;
+	exConstSolvDataStorage()
+	{
+		sz = BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ;
+		curr = 0;
+		btScalar* pt = &data[0];
+		for (int i = 0; i < BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ; i++)
+		{
+			*pt++ = 0;
+		}
+	}
+	void updateData(btScalar  input)
+	{
+		data[curr++] = input;
+	}
+
+private:
+	int curr;
+};
+
 class btConstraintSolver
 {
 public:
@@ -54,6 +80,10 @@ public:
 	virtual void reset() = 0;
 
 	virtual btConstraintSolverType getSolverType() const = 0;
+
+	exConstSolvDataStorage* TmpDataStorage;
+
+	virtual void updateTmpDataStorage() = 0;
 };
 
 #endif  //BT_CONSTRAINT_SOLVER_H

@@ -198,6 +198,8 @@ public:
 		m_resolveSingleConstraintRowLowerLimit = rowSolver;
 	}
 
+	virtual void updateTmpDataStorage();
+
 
 
 	///Various implementations of solving a single constraint row using a generic equality constraint, using scalar reference, SSE2 or SSE4
