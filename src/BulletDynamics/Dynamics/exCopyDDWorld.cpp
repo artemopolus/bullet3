@@ -213,6 +213,7 @@ exCopyDDWorld::exCopyDDWorld(btDispatcher* dispatcher, btBroadphaseInterface* pa
 	  m_latencyMotionStateInterpolation(true)
 
 {
+	TmpDataStorage = new exConstSolvDataStorage();
 	if (!m_constraintSolver)
 	{
 		void* mem = btAlignedAlloc(sizeof(btSequentialImpulseConstraintSolver), 16);
@@ -440,6 +441,8 @@ int exCopyDDWorld::stepSimulation(btScalar timeStep, int maxSubSteps, btScalar f
 
 		applyGravity();
 
+		printf("clamped simulation steps: %d\n", clampedSimulationSteps);
+
 		for (int i = 0; i < clampedSimulationSteps; i++)
 		{
 			internalSingleStepSimulation(fixedTimeStep);
@@ -482,6 +485,8 @@ void exCopyDDWorld::internalSingleStepSimulation(btScalar timeStep)
 
 	///perform collision detection
 	performDiscreteCollisionDetection();
+
+	getManifoldDataToDraw(); //#Debug
 
 	calculateSimulationIslands();
 
@@ -1492,9 +1497,68 @@ void exCopyDDWorld::getManifoldDataToDraw()
 		for (int j = 0; j < num_points; j++)
 		{
 			btManifoldPoint pt = current->getContactPoint(j);
+			TmpDataStorage->updateData(pt.m_appliedImpulse);
+			TmpDataStorage->updateData(pt.m_appliedImpulseLateral1);
+			TmpDataStorage->updateData(pt.m_appliedImpulseLateral2);
+			TmpDataStorage->updateData(pt.m_combinedContactDamping1);
+			TmpDataStorage->updateData(pt.m_combinedContactStiffness1);
+			TmpDataStorage->updateData(pt.m_combinedFriction);
+			TmpDataStorage->updateData(pt.m_combinedRestitution);
+			TmpDataStorage->updateData(pt.m_contactCFM);
+			TmpDataStorage->updateData(pt.m_contactERP);
+			TmpDataStorage->updateData(pt.m_contactMotion1);
+			TmpDataStorage->updateData(pt.m_contactMotion2);
+			TmpDataStorage->updateData(pt.m_contactPointFlags);
+			TmpDataStorage->updateData(pt.m_distance1);
+			TmpDataStorage->updateData(pt.m_frictionCFM);
+			TmpDataStorage->updateData(pt.m_index0);
+			TmpDataStorage->updateData(pt.m_index1);
+			TmpDataStorage->updateData(pt.m_lateralFrictionDir1.getX());
+			TmpDataStorage->updateData(pt.m_lateralFrictionDir1.getY());
+			TmpDataStorage->updateData(pt.m_lateralFrictionDir1.getZ());
+
+			TmpDataStorage->updateData(pt.m_lateralFrictionDir2.getX());
+			TmpDataStorage->updateData(pt.m_lateralFrictionDir2.getY());
+			TmpDataStorage->updateData(pt.m_lateralFrictionDir2.getZ());
+			TmpDataStorage->updateData(pt.m_lifeTime);
+			TmpDataStorage->updateData(pt.m_localPointA.getX());
+			TmpDataStorage->updateData(pt.m_localPointA.getY());
+			TmpDataStorage->updateData(pt.m_localPointA.getZ());
+
+			TmpDataStorage->updateData(pt.m_localPointB.getX());
+			TmpDataStorage->updateData(pt.m_localPointB.getY());
+			TmpDataStorage->updateData(pt.m_localPointB.getZ());
+
+			TmpDataStorage->updateData(pt.m_normalWorldOnB.getX());
+			TmpDataStorage->updateData(pt.m_normalWorldOnB.getY());
+			TmpDataStorage->updateData(pt.m_normalWorldOnB.getZ());
+
+			TmpDataStorage->updateData(pt.m_partId0);
+			TmpDataStorage->updateData(pt.m_partId1);
+			TmpDataStorage->updateData(pt.m_positionWorldOnA.getX());
+			TmpDataStorage->updateData(pt.m_positionWorldOnA.getY());
+			TmpDataStorage->updateData(pt.m_positionWorldOnA.getZ());
+
+			TmpDataStorage->updateData(pt.m_positionWorldOnB.getX());
+			TmpDataStorage->updateData(pt.m_positionWorldOnB.getY());
+			TmpDataStorage->updateData(pt.m_positionWorldOnB.getZ());
+
+			TmpDataStorage->updateData(pt.m_prevRHS);
 		}
 	}
 }
-
+exConstSolvDataStorage* exCopyDDWorld::getTmpSolverData()
+{
+	return m_constraintSolver->TmpDataStorage;
+}
+exConstSolvDataStorage* exCopyDDWorld::getManifoldData()
+{
+	return TmpDataStorage;
+}
+void exCopyDDWorld::resetAllDrawData()
+{
+	m_constraintSolver->TmpDataStorage->reset();
+	TmpDataStorage->reset();
+}
 
 

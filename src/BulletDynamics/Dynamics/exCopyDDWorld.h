@@ -31,6 +31,8 @@ struct InplaceSolverIslandCallback;
 #include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btThreads.h"
 
+#include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
+
 ///btDiscreteDynamicsWorld provides discrete rigid body simulation
 ///those classes replace the obsolete CcdPhysicsEnvironment/CcdPhysicsController
 /// 
@@ -39,12 +41,7 @@ struct InplaceSolverIslandCallback;
 /// Изменения логики класса не имеют пока смысла
 /// 
 /// 
-
-struct DataDrawStorage
-{
-	btScalar data[256];
-};
-
+#define EX_COPY_DDWORLD_DATADRAW_STORAGE_SIZE 256
 
 ATTRIBUTE_ALIGNED16(class)
 exCopyDDWorld : public btDynamicsWorld
@@ -81,6 +78,9 @@ protected:
 
 	btAlignedObjectArray<btPersistentManifold*> m_predictiveManifolds;
 	btSpinMutex m_predictiveManifoldsMutex;  // used to synchronize threads creating predictive contacts
+
+	//#debugdraw
+	exConstSolvDataStorage * TmpDataStorage;
 
 	virtual void predictUnconstraintMotion(btScalar timeStep);
 
@@ -256,7 +256,9 @@ public:
 	// Здесь вставляем новые функции
 
 	void getManifoldDataToDraw();
-
+	exConstSolvDataStorage* getTmpSolverData();
+	exConstSolvDataStorage* getManifoldData();
+	void resetAllDrawData();
 };
 
 #endif  //EX_COPY_DDWORLD_H

@@ -1867,6 +1867,8 @@ btScalar btSequentialImpulseConstraintSolver::solveGroup(btCollisionObject** bod
 
 	solveGroupCacheFriendlyIterations(bodies, numBodies, manifoldPtr, numManifolds, constraints, numConstraints, infoGlobal, debugDrawer);
 
+	updateTmpDataStorage();
+
 	solveGroupCacheFriendlyFinish(bodies, numBodies, infoGlobal);
 
 	return 0.f;
@@ -1882,6 +1884,33 @@ void btSequentialImpulseConstraintSolver::updateTmpDataStorage()
 	for (int i = 0; i < m_tmpSolverContactConstraintPool.size(); i++)
 	{
 		btSolverConstraint* curr = &m_tmpSolverContactConstraintPool[i];
-		TmpDataStorage->updateData(btScalar(curr->m_appliedImpulse));
+		uploadBtSolvConstrData(curr);
 	}
+	for (int i = 0; i < m_tmpSolverContactFrictionConstraintPool.size(); i++)
+		uploadBtSolvConstrData(&m_tmpSolverContactFrictionConstraintPool[i]);
+	for (int i = 0; i < m_tmpSolverContactRollingFrictionConstraintPool.size(); i++)
+		uploadBtSolvConstrData(&m_tmpSolverContactRollingFrictionConstraintPool[i]);
+	for (int i = 0; i < m_tmpSolverNonContactConstraintPool.size(); i++)
+		uploadBtSolvConstrData(&m_tmpSolverNonContactConstraintPool[i]);
+}
+
+int btSequentialImpulseConstraintSolver::uploadBtSolvConstrData(btSolverConstraint* input)
+{
+	if(TmpDataStorage->updateData(btScalar(input->m_appliedImpulse))) return 0;
+	if(TmpDataStorage->updateData(btScalar(input->m_appliedPushImpulse))) return 0;
+	if(TmpDataStorage->updateData(btScalar(input->m_cfm))) return 0;
+	if(TmpDataStorage->updateData(btScalar(input->m_friction))) return 0;
+	if(TmpDataStorage->updateData(btScalar(input->m_jacDiagABInv))) return 0;
+	if(TmpDataStorage->updateData(btScalar(input->m_lowerLimit))) return 0;
+	if(TmpDataStorage->updateData(btScalar(input->m_rhs))) return 0;
+	if(TmpDataStorage->updateData(btScalar(input->m_rhsPenetration))) return 0;
+	if(TmpDataStorage->updateData(btScalar(input->m_unusedPadding4))) return 0;
+	if(TmpDataStorage->updateData(btScalar(input->m_upperLimit))) return 0;
+	if(TmpDataStorage->updateData(input->m_frictionIndex)) return 0;
+	if(TmpDataStorage->updateData(input->m_numRowsForNonContactConstraint)) return 0;
+	if(TmpDataStorage->updateData(input->m_overrideNumSolverIterations)) return 0;
+	if(TmpDataStorage->updateData(input->m_solverBodyIdA)) return 0;
+	if(TmpDataStorage->updateData(input->m_solverBodyIdB)) return 0;
+
+	return 1;
 }

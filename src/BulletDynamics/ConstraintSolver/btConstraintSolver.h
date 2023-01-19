@@ -44,7 +44,6 @@ enum btConstraintSolverType
 struct exConstSolvDataStorage
 {
 	btScalar data[BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ];
-	int sz;
 	exConstSolvDataStorage()
 	{
 		sz = BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ;
@@ -55,13 +54,26 @@ struct exConstSolvDataStorage
 			*pt++ = 0;
 		}
 	}
-	void updateData(btScalar  input)
+	int updateData(btScalar  input)
 	{
-		data[curr++] = input;
+		if (curr < sz)
+		{
+			data[curr++] = input;
+			return 1;
+		}
+		else
+			return 0;
+		return 1;
 	}
+	void reset()
+	{
+		curr = 0;
+	}
+	int getSize() const { return sz; }
 
 private:
 	int curr;
+	int sz;
 };
 
 class btConstraintSolver
