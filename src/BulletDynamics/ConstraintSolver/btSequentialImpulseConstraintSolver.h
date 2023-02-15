@@ -29,6 +29,7 @@ class btCollisionObject;
 
 typedef btScalar (*btSingleConstraintRowSolver)(btSolverBody&, btSolverBody&, const btSolverConstraint&);
 
+
 struct btSolverAnalyticsData
 {
 	btSolverAnalyticsData()
@@ -45,6 +46,8 @@ struct btSolverAnalyticsData
 	int m_numIterationsUsed;
 	double m_remainingLeastSquaresResidual;
 };
+
+#define BTSEQIMPCONSTSOLV_DEBUG
 
 ///The btSequentialImpulseConstraintSolver is a fast SIMD implementation of the Projected Gauss Seidel (iterative LCP) method.
 ATTRIBUTE_ALIGNED16(class)
@@ -215,6 +218,11 @@ public:
 	btSingleConstraintRowSolver getSSE2ConstraintRowSolverLowerLimit();
 	btSingleConstraintRowSolver getSSE4_1ConstraintRowSolverLowerLimit();
 	btSolverAnalyticsData m_analyticsData;
+
+#ifdef BTSEQIMPCONSTSOLV_DEBUG
+	btConstraintArray m_tmp_storage;
+#endif
+
 };
 
 #endif  //BT_SEQUENTIAL_IMPULSE_CONSTRAINT_SOLVER_H

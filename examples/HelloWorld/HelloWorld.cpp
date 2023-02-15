@@ -136,6 +136,37 @@ int main(int argc, char** argv)
 	{
 		dynamicsWorld->stepSimulation(1.f / 60.f, 10);
 
+		exCopyDDWorld::IslandData * island_data_pt = nullptr;
+		btAlignedObjectArray<btPersistentManifold*> * predictive_manifolds_data = dynamicsWorld->getPredictiveManifolds();
+
+		island_data_pt = dynamicsWorld->getIslandCallbackDataPt();
+		int island_data_cnt = island_data_pt->m_savedpoint.size();
+
+		if (island_data_cnt)
+		{
+			for (int j = 0; j < island_data_cnt; j++)
+			{
+				btVector3 ptA = island_data_pt->m_savedpoint[j].getPositionWorldOnA();
+				printf("point[%d]: %f; %f; %f\n", j, ptA.x(), ptA.y(), ptA.z());
+
+			}
+		}
+		btConstraintArray * tmp_storage_pt = dynamicsWorld->getTmpSeqImplStorage();
+		int tmp_storage_cnt = tmp_storage_pt->size();
+		if (tmp_storage_cnt)
+		{
+			for (int j = 0; j < tmp_storage_cnt; j++)
+			{
+				btSolverConstraint val = tmp_storage_pt->at(j);
+				printf("some\n");
+			}
+		}
+		dynamicsWorld->clearTmpSeqImplStorage();
+		dynamicsWorld->clearIslandCallbackData();
+	
+		if (predictive_manifolds_data)
+			printf("Get predictive manifolds\n");
+
 		//print positions of all objects
 		for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
 		{

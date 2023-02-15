@@ -99,6 +99,9 @@ struct InplaceSolverIslandCallback : public btSimulationIslandManager::IslandCal
 	btAlignedObjectArray<btPersistentManifold*> m_manifolds;
 	btAlignedObjectArray<btTypedConstraint*> m_constraints;
 
+
+	exCopyDDWorld::IslandData m_island_data;
+
 	InplaceSolverIslandCallback(
 		btConstraintSolver* solver,
 		btStackAlloc* stackAlloc,
@@ -133,6 +136,26 @@ struct InplaceSolverIslandCallback : public btSimulationIslandManager::IslandCal
 
 	virtual void processIsland(btCollisionObject** bodies, int numBodies, btPersistentManifold** manifolds, int numManifolds, int islandId)
 	{
+		if (numManifolds && numBodies)
+		{
+			for (int i = 0; i < numManifolds; i++)
+			{
+				auto man = manifolds[i];
+				int num_contacts = man->getNumContacts();
+				for (int j = 0; j < num_contacts; j++)
+				{
+					//printf("Point[%d]\n", j);
+					btManifoldPoint mpt = man->getContactPoint(j);
+					/*btVector3 pt = man->getContactPoint(j).getPositionWorldOnA();
+					printf("A: %f, %f, %f\n",  pt.x(), pt.y(), pt.z() );
+					pt = man->getContactPoint(j).getPositionWorldOnB();
+					printf("B: %f, %f, %f\n",  pt.x(), pt.y(), pt.z() );*/
+
+					m_island_data.m_savedpoint.push_back(mpt);
+					
+				}
+			}
+		}
 		if (islandId < 0)
 		{
 			///we don't split islands, so all constraints/contact manifolds/bodies are passed into the solver regardless the island id
@@ -213,7 +236,7 @@ exCopyDDWorld::exCopyDDWorld(btDispatcher* dispatcher, btBroadphaseInterface* pa
 	  m_latencyMotionStateInterpolation(true)
 
 {
-	TmpDataStorage = new exConstSolvDataStorage();
+	TmpDataStorage = new exConstSolvDataStorage(&TmpDataStorageData[0], EX_COPY_DDWORLD_DATADRAW_STORAGE_SIZE);
 	if (!m_constraintSolver)
 	{
 		void* mem = btAlignedAlloc(sizeof(btSequentialImpulseConstraintSolver), 16);
@@ -393,6 +416,7 @@ void exCopyDDWorld::synchronizeMotionStates()
 
 int exCopyDDWorld::stepSimulation(btScalar timeStep, int maxSubSteps, btScalar fixedTimeStep)
 {
+	printf("stepSimulation\n");
 	startProfiling(timeStep);
 
 	int numSimulationSubSteps = 0;
@@ -459,6 +483,8 @@ int exCopyDDWorld::stepSimulation(btScalar timeStep, int maxSubSteps, btScalar f
 #ifndef BT_NO_PROFILE
 	CProfileManager::Increment_Frame_Counter();
 #endif  //BT_NO_PROFILE
+
+
 
 	return numSimulationSubSteps;
 }
@@ -954,6 +980,7 @@ void exCopyDDWorld::releasePredictiveContacts()
 		btPersistentManifold* manifold = m_predictiveManifolds[i];
 		this->m_dispatcher1->releaseManifold(manifold);
 	}
+	printf("Predictive manifolds clear\n");
 	m_predictiveManifolds.clear();
 }
 
@@ -1562,3 +1589,23 @@ void exCopyDDWorld::resetAllDrawData()
 }
 
 
+void exCopyDDWorld::clearIslandCallbackData()
+{
+	m_solverIslandCallback->m_island_data.m_savedpoint.resizeNoInitialize(0);
+}
+exCopyDDWorld::IslandData* exCopyDDWorld::getIslandCallbackDataPt()
+{
+	return &m_solverIslandCallback->m_island_data;
+}
+
+btConstraintArray* exCopyDDWorld::getTmpSeqImplStorage()
+{
+	btSequentialImpulseConstraintSolver* trg = (btSequentialImpulseConstraintSolver*)m_constraintSolver;
+	return &trg->m_tmp_storage;
+}
+
+void exCopyDDWorld::clearTmpSeqImplStorage()
+{
+	btSequentialImpulseConstraintSolver* trg = (btSequentialImpulseConstraintSolver*)m_constraintSolver;
+	trg->m_tmp_storage.clear();
+}

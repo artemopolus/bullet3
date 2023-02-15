@@ -70,6 +70,20 @@ public:
 	{
 		m_splitIslands = doSplitIslands;
 	}
+	void getIslandManifold(btPersistentManifold ** manifold, int * manifold_num)
+	{
+		if (!m_islandmanifold.size())
+			return;
+		manifold = &m_islandmanifold[0];
+		*manifold_num = m_islandmanifold.size();
+	}
+	void getIslandBodies(btCollisionObject ** bodies, int * body_num)
+	{
+		if (!m_islandBodies.size())
+			return;
+		bodies = &m_islandBodies[0];
+		*body_num = m_islandBodies.size();
+	}
 };
 
 #endif  //BT_SIMULATION_ISLAND_MANAGER_H

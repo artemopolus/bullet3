@@ -357,7 +357,7 @@ btSequentialImpulseConstraintSolver::btSequentialImpulseConstraintSolver()
 	setupSolverFunctions(false);
 
 	//
-	TmpDataStorage = new exConstSolvDataStorage();
+	TmpDataStorage = new exConstSolvDataStorage(&TmpDataStorageData[0], BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ);
 }
 
 void btSequentialImpulseConstraintSolver::setupSolverFunctions(bool useSimd)
@@ -1847,6 +1847,29 @@ btScalar btSequentialImpulseConstraintSolver::solveGroupCacheFriendlyFinish(btCo
 
 	writeBackJoints(0, m_tmpSolverNonContactConstraintPool.size(), infoGlobal);
 	writeBackBodies(0, m_tmpSolverBodyPool.size(), infoGlobal);
+
+#ifdef BTSEQIMPCONSTSOLV_DEBUG
+	for (int i = 0; i < m_tmpSolverContactConstraintPool.size(); i++)
+	{
+		auto trg = m_tmpSolverContactConstraintPool[i];
+		m_tmp_storage.push_back(trg);
+	}
+	for (int i = 0; i < m_tmpSolverNonContactConstraintPool.size(); i++)
+	{
+		auto trg = m_tmpSolverNonContactConstraintPool[i];
+		m_tmp_storage.push_back(trg);
+	}
+	for (int i = 0; i < m_tmpSolverContactFrictionConstraintPool.size(); i++)
+	{
+		auto trg = m_tmpSolverContactFrictionConstraintPool[i];	
+		m_tmp_storage.push_back(trg);
+	}
+	for (int i = 0; i < m_tmpSolverContactRollingFrictionConstraintPool.size(); i++)
+	{
+		auto trg = m_tmpSolverContactRollingFrictionConstraintPool[i];
+		m_tmp_storage.push_back(trg);
+	}
+#endif
 
 	m_tmpSolverContactConstraintPool.resizeNoInitialize(0);
 	m_tmpSolverNonContactConstraintPool.resizeNoInitialize(0);

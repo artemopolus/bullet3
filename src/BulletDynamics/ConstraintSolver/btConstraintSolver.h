@@ -43,13 +43,15 @@ enum btConstraintSolverType
 
 struct exConstSolvDataStorage
 {
-	btScalar data[BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ];
-	exConstSolvDataStorage()
+	//btScalar data[BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ];
+	btScalar* data;
+	exConstSolvDataStorage(btScalar * storage, int count)
 	{
-		sz = BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ;
+		data = storage;
+		sz = count;
 		curr = 0;
 		btScalar* pt = &data[0];
-		for (int i = 0; i < BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ; i++)
+		for (int i = 0; i < sz; i++)
 		{
 			*pt++ = 0;
 		}
@@ -94,6 +96,8 @@ public:
 	virtual btConstraintSolverType getSolverType() const = 0;
 
 	exConstSolvDataStorage* TmpDataStorage;
+
+	btScalar TmpDataStorageData[BT_CONSTRAINT_SOLVER_DATA_STORAGE_SZ];
 
 	virtual void updateTmpDataStorage() = 0;
 };
