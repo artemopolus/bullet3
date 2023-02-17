@@ -134,8 +134,35 @@ int main(int argc, char** argv)
 	///-----stepsimulation_start-----
 	for (i = 0; i < 150; i++)
 	{
+#ifdef SIMPLE_BULLET_STEPSIMULATION
 		dynamicsWorld->stepSimulation(1.f / 60.f, 10);
+#else
+		btScalar timeStep = 1.f / 60.f;
+		int maxSubSteps = 10;
+		int numSimulationSubSteps =	dynamicsWorld->stepSimulationPart0(timeStep, maxSubSteps);
+		if (numSimulationSubSteps)
+		{
+			int clampedSimulationSteps = (numSimulationSubSteps > maxSubSteps) ? maxSubSteps : numSimulationSubSteps;
+			dynamicsWorld->stepSimulationPart1(timeStep, maxSubSteps);
+			for (int i = 0; i < clampedSimulationSteps; i++)
+			{
+				dynamicsWorld->stepSimulationPart2(timeStep);
+				dynamicsWorld->stepSimulationPart3(timeStep);
+				dynamicsWorld->stepSimulationPart4();
+				dynamicsWorld->stepSimulationPart5();
+				dynamicsWorld->stepSimulationPart6(timeStep);
+				dynamicsWorld->stepSimulationPart7(timeStep);
+				dynamicsWorld->stepSimulationPart8(timeStep);
+				dynamicsWorld->stepSimulationPart9(timeStep);
+			}
+		}
+		else
+		{
+			dynamicsWorld->stepSimulationPart10();
+		}
+		dynamicsWorld->stepSimulationPart11();
 
+#endif
 		exCopyDDWorld::IslandData * island_data_pt = nullptr;
 		btAlignedObjectArray<btPersistentManifold*> * predictive_manifolds_data = dynamicsWorld->getPredictiveManifolds();
 

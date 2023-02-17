@@ -122,6 +122,20 @@ public:
 	///if maxSubSteps > 0, it will interpolate motion between fixedTimeStep's
 	virtual int stepSimulation(btScalar timeStep, int maxSubSteps = 1, btScalar fixedTimeStep = btScalar(1.) / btScalar(60.));
 
+	int stepSimulationPart0(btScalar timeStep, int maxSubSteps = 1, btScalar fixedTimeStep = btScalar(1.) / btScalar(60.));
+	int stepSimulationPart1(btScalar fixedTimeStep, int clampedSimulationSteps);
+	void stepSimulationPart2(btScalar timeStep);
+	void stepSimulationPart3(btScalar timeStep);
+	void stepSimulationPart4();
+	void stepSimulationPart5();
+	void stepSimulationPart6(btScalar timeStep);
+	void stepSimulationPart7(btScalar timeStep);
+	void stepSimulationPart8(btScalar timeStep);
+	void stepSimulationPart9(btScalar timeStep);
+	void stepSimulationPart10();
+	void stepSimulationPart11();
+
+
     virtual void solveConstraints(btContactSolverInfo & solverInfo);
     
 	virtual void synchronizeMotionStates();

@@ -46,6 +46,9 @@ subject to the following restrictions:
 
 #include "LinearMath/btSerializer.h"
 
+#include "BulletCollision/BroadphaseCollision/btDbvtBroadphase.h"
+#include "BulletCollision/BroadphaseCollision/btOverlappingPairCache.h"
+
 #if 0
 btAlignedObjectArray<btVector3> debugContacts;
 btAlignedObjectArray<btVector3> debugNormals;
@@ -488,6 +491,7 @@ int exCopyDDWorld::stepSimulation(btScalar timeStep, int maxSubSteps, btScalar f
 
 	return numSimulationSubSteps;
 }
+
 
 void exCopyDDWorld::internalSingleStepSimulation(btScalar timeStep)
 {
@@ -1609,3 +1613,140 @@ void exCopyDDWorld::clearTmpSeqImplStorage()
 	btSequentialImpulseConstraintSolver* trg = (btSequentialImpulseConstraintSolver*)m_constraintSolver;
 	trg->m_tmp_storage.clear();
 }
+
+int exCopyDDWorld::stepSimulationPart0(btScalar timeStep, int maxSubSteps, btScalar fixedTimeStep)
+{
+	printf("stepSimulation\n");
+	startProfiling(timeStep);
+
+	int numSimulationSubSteps = 0;
+
+	if (maxSubSteps)
+	{
+		//fixed timestep with interpolation
+		m_fixedTimeStep = fixedTimeStep;
+		m_localTime += timeStep;
+		if (m_localTime >= fixedTimeStep)
+		{
+			numSimulationSubSteps = int(m_localTime / fixedTimeStep);
+			m_localTime -= numSimulationSubSteps * fixedTimeStep;
+		}
+	}
+	else
+	{
+		//variable timestep
+		fixedTimeStep = timeStep;
+		m_localTime = m_latencyMotionStateInterpolation ? 0 : timeStep;
+		m_fixedTimeStep = 0;
+		if (btFuzzyZero(timeStep))
+		{
+			numSimulationSubSteps = 0;
+			maxSubSteps = 0;
+		}
+		else
+		{
+			numSimulationSubSteps = 1;
+			maxSubSteps = 1;
+		}
+	}
+
+	//process some debugging flags
+	if (getDebugDrawer())
+	{
+		btIDebugDraw* debugDrawer = getDebugDrawer();
+		gDisableDeactivation = (debugDrawer->getDebugMode() & btIDebugDraw::DBG_NoDeactivation) != 0;
+	}
+	return numSimulationSubSteps;
+}
+
+
+int exCopyDDWorld::stepSimulationPart1(btScalar fixedTimeStep, int clampedSimulationSteps)
+{
+	saveKinematicState(fixedTimeStep * clampedSimulationSteps);
+
+	applyGravity();
+
+	printf("clamped simulation steps: %d\n", clampedSimulationSteps);
+	return 0;
+}
+void exCopyDDWorld::stepSimulationPart2(btScalar timeStep)
+{
+	BT_PROFILE("internalSingleStepSimulation");
+
+	if (0 != m_internalPreTickCallback)
+	{
+		(*m_internalPreTickCallback)(this, timeStep);
+	}
+
+	///apply gravity, predict motion
+	predictUnconstraintMotion(timeStep);
+}
+void exCopyDDWorld::stepSimulationPart3(btScalar timeStep)
+{
+	btDispatcherInfo& dispatchInfo = getDispatchInfo();
+
+	dispatchInfo.m_timeStep = timeStep;
+	dispatchInfo.m_stepCount = 0;
+	dispatchInfo.m_debugDraw = getDebugDrawer();
+
+	createPredictiveContacts(timeStep);
+}
+void exCopyDDWorld::stepSimulationPart4()
+{
+	btDbvtBroadphase* brph = static_cast<btDbvtBroadphase*>(m_broadphasePairCache);
+	btHashedOverlappingPairCache* hashed = static_cast<btHashedOverlappingPairCache*>(brph->m_paircache);
+	///perform collision detection
+	printf("Get num manifolds 4: %d\n", getDispatcher()->getNumManifolds());
+	performDiscreteCollisionDetection();
+	printf("hashed: %d\n", hashed->GetCount());
+
+	printf("Get num manifolds 4: %d\n", getDispatcher()->getNumManifolds());
+}
+	//getManifoldDataToDraw(); //#Debug
+void exCopyDDWorld::stepSimulationPart5()
+{
+	calculateSimulationIslands();
+}
+void exCopyDDWorld::stepSimulationPart6(btScalar timeStep)
+{
+	getSolverInfo().m_timeStep = timeStep;
+
+	///solve contact and other joint constraints
+	solveConstraints(getSolverInfo());
+}
+void exCopyDDWorld::stepSimulationPart7(btScalar timeStep)
+{
+	///CallbackTriggers();
+
+	///integrate transforms
+
+	integrateTransforms(timeStep);
+}
+void exCopyDDWorld::stepSimulationPart8(btScalar timeStep)
+{
+	///update vehicle simulation
+	updateActions(timeStep);
+
+	updateActivationState(timeStep);
+}
+void exCopyDDWorld::stepSimulationPart9(btScalar timeStep)
+{
+	if (0 != m_internalTickCallback)
+	{
+		(*m_internalTickCallback)(this, timeStep);
+	}
+
+	synchronizeMotionStates();
+}
+
+
+void exCopyDDWorld::stepSimulationPart10()
+{
+	synchronizeMotionStates();
+}
+void exCopyDDWorld::stepSimulationPart11()
+{
+	clearForces();
+}
+
+
