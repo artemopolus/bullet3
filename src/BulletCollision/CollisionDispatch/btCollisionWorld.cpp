@@ -72,6 +72,8 @@ subject to the following restrictions:
 #define EMBT_PRINT(x)
 #endif
 #endif
+#include "BulletCollision/BroadphaseCollision/btDbvtBroadphase.h"
+#include "BulletCollision/BroadphaseCollision/btOverlappingPairCache.h"
 
 btCollisionWorld::btCollisionWorld(btDispatcher* dispatcher, btBroadphaseInterface* pairCache, btCollisionConfiguration* collisionConfiguration)
 	: m_dispatcher1(dispatcher),
@@ -232,11 +234,19 @@ void btCollisionWorld::performDiscreteCollisionDetection()
 {
 	BT_PROFILE("performDiscreteCollisionDetection");
 
+	btDbvtBroadphase* brph = static_cast<btDbvtBroadphase*>(m_broadphasePairCache);
+	btHashedOverlappingPairCache* hashed = static_cast<btHashedOverlappingPairCache*>(brph->m_paircache);
+
 	btDispatcherInfo& dispatchInfo = getDispatchInfo();
 
 	updateAabbs();
+	
 
 	computeOverlappingPairs();
+
+	printf("Get hashed count  3: %d\n", hashed->GetCount());
+	printf("Get num manifolds 3: %d\n", getDispatcher()->getNumManifolds());
+
 
 	btDispatcher* dispatcher = getDispatcher();
 	{
@@ -244,6 +254,8 @@ void btCollisionWorld::performDiscreteCollisionDetection()
 		if (dispatcher)
 			dispatcher->dispatchAllCollisionPairs(m_broadphasePairCache->getOverlappingPairCache(), dispatchInfo, m_dispatcher1);
 	}
+	printf("Get hashed count  4: %d\n", hashed->GetCount());
+	printf("Get num manifolds 4: %d\n", getDispatcher()->getNumManifolds());
 }
 
 void btCollisionWorld::removeCollisionObject(btCollisionObject* collisionObject)

@@ -55,7 +55,7 @@ public:
 	class btConeTwistConstraint* m_ctc;
 };
 
-#define ENABLE_ALL_DEMOS 1
+#define ENABLE_ALL_DEMOS 0
 
 #define CUBE_HALF_EXTENTS 1.f
 
@@ -200,6 +200,7 @@ void AllConstraintDemo::initPhysics()
 #endif
 
 #if ENABLE_ALL_DEMOS
+//#if 1 
 	//point to point constraint (ball socket)
 	{
 		btRigidBody* body0 = createRigidBody(mass, trans, shape);
@@ -221,11 +222,20 @@ void AllConstraintDemo::initPhysics()
 
 #define P2P
 #ifdef P2P
-		btTypedConstraint* p2p = new btPoint2PointConstraint(*body0, pivotInA);
+		//btTypedConstraint* p2p = new btPoint2PointConstraint(*body0, pivotInA);
+		btPoint2PointConstraint * p2p = new btPoint2PointConstraint(*body0, pivotInA);
+		
 		//btTypedConstraint* p2p = new btPoint2PointConstraint(*body0,*body1,pivotInA,pivotInB);
 		//btTypedConstraint* hinge = new btHingeConstraint(*body0,*body1,pivotInA,pivotInB,axisInA,axisInB);
 		m_dynamicsWorld->addConstraint(p2p);
 		p2p->setDbgDrawSize(btScalar(5.f));
+
+		btVector3 pivotInA1(CUBE_HALF_EXTENTS, 0, -CUBE_HALF_EXTENTS);
+		p2p = new btPoint2PointConstraint(*body0, pivotInA1);
+		m_dynamicsWorld->addConstraint(p2p);
+		btVector3 pivotInA2(2*CUBE_HALF_EXTENTS, -CUBE_HALF_EXTENTS, -CUBE_HALF_EXTENTS);
+		p2p = new btPoint2PointConstraint(*body0, pivotInA2);
+		m_dynamicsWorld->addConstraint(p2p);
 #else
 		btHingeConstraint* hinge = new btHingeConstraint(*body0, pivotInA, axisInA);
 
@@ -241,7 +251,8 @@ void AllConstraintDemo::initPhysics()
 	}
 #endif
 
-#if ENABLE_ALL_DEMOS
+//#if ENABLE_ALL_DEMOS
+#if 1 
 	{
 		btTransform trans;
 		trans.setIdentity();
@@ -283,6 +294,7 @@ void AllConstraintDemo::initPhysics()
 #endif
 
 #if ENABLE_ALL_DEMOS
+//#if 1
 	//create a slider, using the generic D6 constraint
 	{
 		mass = 1.f;
@@ -476,6 +488,7 @@ void AllConstraintDemo::initPhysics()
 #endif
 
 #if ENABLE_ALL_DEMOS
+//#if 1 
 	{
 		// create a universal joint using generic 6DOF constraint
 		// create two rigid bodies
@@ -506,6 +519,7 @@ void AllConstraintDemo::initPhysics()
 #endif
 
 #if ENABLE_ALL_DEMOS
+//#if 1
 	{  // create a generic 6DOF constraint with springs
 
 		btTransform tr;
@@ -531,8 +545,10 @@ void AllConstraintDemo::initPhysics()
 		pGen6DOFSpring->setLinearUpperLimit(btVector3(5., 0., 0.));
 		pGen6DOFSpring->setLinearLowerLimit(btVector3(-5., 0., 0.));
 
-		pGen6DOFSpring->setAngularLowerLimit(btVector3(0.f, 0.f, -1.5f));
-		pGen6DOFSpring->setAngularUpperLimit(btVector3(0.f, 0.f, 1.5f));
+		//pGen6DOFSpring->setAngularLowerLimit(btVector3(0.f, 0.f, -1.5f));
+		//pGen6DOFSpring->setAngularUpperLimit(btVector3(0.f, 0.f, 1.5f));
+		pGen6DOFSpring->setAngularLowerLimit(btVector3(0.f, 0.f, 0.f));
+		pGen6DOFSpring->setAngularUpperLimit(btVector3(0.f, 0.f, 0.f));
 
 		m_dynamicsWorld->addConstraint(pGen6DOFSpring, true);
 		pGen6DOFSpring->setDbgDrawSize(btScalar(5.f));

@@ -42,7 +42,7 @@ btCollisionDispatcher::btCollisionDispatcher(btCollisionConfiguration* collision
 {
 	int i;
 	EMBT_PRINT("btCollisionDispatcher part 1");
-	printf("nnn");
+	//printf("nnn");
 	setNearCallback(defaultNearCallback);
 
 	m_collisionAlgorithmPoolAllocator = collisionConfiguration->getCollisionAlgorithmPool();

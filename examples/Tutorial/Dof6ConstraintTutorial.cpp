@@ -197,7 +197,7 @@ void Dof6ConstraintTutorial::initPhysics()
 		constraint->setDbgDrawSize(btScalar(2.f));
 		m_dynamicsWorld->addConstraint(constraint, true);
 	}
-#if 0
+#if 1
 /////////// box with rotate spring, attached to static body
 /////////// box should swing (rotate) left-to-right forever
 		{

@@ -155,6 +155,8 @@ struct InplaceSolverIslandCallback : public btSimulationIslandManager::IslandCal
 					printf("B: %f, %f, %f\n",  pt.x(), pt.y(), pt.z() );*/
 
 					m_island_data.m_savedpoint.push_back(mpt);
+					m_island_data.m_bodyA.push_back(man->getBody0());
+					m_island_data.m_bodyB.push_back(man->getBody1());
 					
 				}
 			}
@@ -1595,7 +1597,8 @@ void exCopyDDWorld::resetAllDrawData()
 
 void exCopyDDWorld::clearIslandCallbackData()
 {
-	m_solverIslandCallback->m_island_data.m_savedpoint.resizeNoInitialize(0);
+	//m_solverIslandCallback->m_island_data.m_savedpoint.resizeNoInitialize(0);
+	m_solverIslandCallback->m_island_data.clear();
 }
 exCopyDDWorld::IslandData* exCopyDDWorld::getIslandCallbackDataPt()
 {
@@ -1695,12 +1698,12 @@ void exCopyDDWorld::stepSimulationPart4()
 {
 	btDbvtBroadphase* brph = static_cast<btDbvtBroadphase*>(m_broadphasePairCache);
 	btHashedOverlappingPairCache* hashed = static_cast<btHashedOverlappingPairCache*>(brph->m_paircache);
+	printf("Get hashed count 1: %d\n", hashed->GetCount());
+	printf("Get num manifolds 4: %d\n", getDispatcher()->getNumManifolds());
 	///perform collision detection
-	printf("Get num manifolds 4: %d\n", getDispatcher()->getNumManifolds());
 	performDiscreteCollisionDetection();
-	printf("hashed: %d\n", hashed->GetCount());
-
-	printf("Get num manifolds 4: %d\n", getDispatcher()->getNumManifolds());
+	printf("Get hashed count 2: %d\n", hashed->GetCount());
+	printf("Get num manifolds 5: %d\n", getDispatcher()->getNumManifolds());
 }
 	//getManifoldDataToDraw(); //#Debug
 void exCopyDDWorld::stepSimulationPart5()

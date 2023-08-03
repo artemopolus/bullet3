@@ -279,6 +279,16 @@ public:
 	struct IslandData
 	{
 		btAlignedObjectArray<btManifoldPoint> m_savedpoint;
+		btAlignedObjectArray<const btCollisionObject*> m_bodyA;
+		btAlignedObjectArray<const btCollisionObject*> m_bodyB;
+
+	public:
+		void clear()
+		{
+			m_savedpoint.resizeNoInitialize(0);
+			m_bodyA.resizeNoInitialize(0);
+			m_bodyB.resizeNoInitialize(0);
+		}
 	};
 
 	btAlignedObjectArray<btPersistentManifold*>* getPredictiveManifolds()
